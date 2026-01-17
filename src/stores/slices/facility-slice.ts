@@ -20,7 +20,7 @@ export interface FacilitySlice {
     selectedRoomIdForCreate: string | null;
 
     // Actions
-    fetchFacilities: () => Promise<void>;
+    fetchFacilities: (page: number) => Promise<void>;
     addFacility: (data: any) => Promise<void>;
     editFacility: (id: string, data: any) => Promise<void>;
     removeFacility: (id: string) => Promise<void>;
@@ -46,7 +46,7 @@ export const createFacilitySlice: StateCreator<StoreState, [], [], FacilitySlice
             const data = await getFacilities(page);
             set({
                 facilities: data.facilities,
-                facilityPagination: data.pagination, // API থেকে আসা প্যাজিনেশন সেট করা
+                facilityPagination: data.pagination,
                 isLoadingFacilities: false
             });
         } catch (error) {
@@ -59,7 +59,7 @@ export const createFacilitySlice: StateCreator<StoreState, [], [], FacilitySlice
         set({isSubmitting: true});
         try {
             await createFacility(data);
-            await get().fetchFacilities();
+            await get().fetchFacilities(1);
             const currentRooms = get().rooms;
             const updatedRooms = currentRooms.map((room) => {
                 if (room._id === data.room) {
@@ -85,7 +85,8 @@ export const createFacilitySlice: StateCreator<StoreState, [], [], FacilitySlice
         set({isSubmitting: true});
         try {
             await updateFacility(id, data);
-            await get().fetchFacilities(); // Refresh list
+            // await get().fetchFacilities(1); // Refresh list
+            await get().fetchFacilities(get().facilityPagination.page);
             set({isFacilitySheetOpen: false, selectedFacility: null, isSubmitting: false});
         } catch (error) {
             set({isSubmitting: false});
@@ -94,16 +95,27 @@ export const createFacilitySlice: StateCreator<StoreState, [], [], FacilitySlice
     },
 
     removeFacility: async (id) => {
-        // Optimistic Update
+        set({isDeleting: true});
         const previousFacilities = get().facilities;
         set({facilities: previousFacilities.filter(f => f._id !== id)});
 
         try {
             await deleteFacilityApi(id);
+            const currentPagination = get().facilityPagination
+            const currentFacilities = get().facilities;
+
+            if (currentFacilities.length === 0 && currentPagination.page > 1) {
+                await get().fetchFacilities(currentPagination.page - 1);
+            } else {
+                await get().fetchFacilities(currentPagination.page);
+            }
+
         } catch (error) {
-            console.error("Delete failed", error);
-            // Rollback on error
-            set({facilities: previousFacilities});
+            console.log(error);
+            set({
+                facilities: previousFacilities,
+                isDeleting: false
+            });
             throw error;
         }
     },

@@ -126,7 +126,7 @@ export default function FacilitySheet() {
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col flex-1 overflow-hidden">
 
-                        <ScrollArea className="flex-1 w-full h-[calc(100vh-16rem)]">
+                        <ScrollArea className="flex-1 w-full h-[calc(100vh-16rem)] pb-5">
                             <div className="px-4 space-y-6">
 
                                 {/* Facility Type */}

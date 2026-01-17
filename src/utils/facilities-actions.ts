@@ -1,8 +1,10 @@
 import axios, {endpoints} from "@/utils/axios";
-import {FacilityPayload} from "@/types"; // Your axios instance
+import {FacilityPayload} from "@/types";
 
-export const getFacilities = async (page:number = 1) => {
-    const res = await axios.get(`endpoints.facilities.getAllFacilities?page=${page}`);
+export const getFacilities = async (page: number = 1) => {
+    const res = await axios.get(endpoints.facilities.getAllFacilities, {
+        params: {page},
+    });
     return res.data;
 };
 

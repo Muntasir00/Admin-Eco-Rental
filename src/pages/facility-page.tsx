@@ -1,5 +1,5 @@
-import React from "react";
-import { useAppStore } from "@/stores/slices/store";
+import React, {useEffect, useState} from "react";
+import {useAppStore} from "@/stores/slices/store";
 import {
     Pencil,
     Trash2,
@@ -16,17 +16,19 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
+import {Badge} from "@/components/ui/badge";
+import {Button} from "@/components/ui/button";
+import {Skeleton} from "@/components/ui/skeleton";
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
+import FacilityTableSkeleton from "@/components/facilities/facility-table-skeleton";
+import FacilitySheet from "@/components/facilities/facility-sheet";
+import DeleteFacilityDialog from "@/components/facilities/delete-facility-dialog";
 
-// --- Helper: Get Icon based on name ---
 const getAmenityIcon = (name: string) => {
     const n = name.toLowerCase();
     if (n.includes("wifi")) return <Wifi className="w-3 h-3 mr-1"/>;
@@ -36,45 +38,14 @@ const getAmenityIcon = (name: string) => {
     return null;
 };
 
-// --- Component: Loading Skeleton ---
-const FacilityTableSkeleton = () => {
-    return (
-        <div className="rounded-md border border-slate-200 bg-white">
-            <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-                <Skeleton className="h-6 w-[150px]"/>
-                <Skeleton className="h-9 w-[100px]"/>
-            </div>
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        {[1, 2, 3, 4, 5].map((i) => (
-                            <TableHead key={i}><Skeleton className="h-4 w-20"/></TableHead>
-                        ))}
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {[1, 2, 3, 4, 5].map((row) => (
-                        <TableRow key={row}>
-                            <TableCell><Skeleton className="h-5 w-24"/></TableCell>
-                            <TableCell><Skeleton className="h-5 w-32"/></TableCell>
-                            <TableCell>
-                                <div className="flex gap-2">
-                                    <Skeleton className="h-6 w-16 rounded-full"/>
-                                    <Skeleton className="h-6 w-12 rounded-full"/>
-                                </div>
-                            </TableCell>
-                            <TableCell><Skeleton className="h-5 w-20"/></TableCell>
-                            <TableCell><Skeleton className="h-8 w-8 rounded-md"/></TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </div>
-    );
-};
 
 export default function FacilityPage() {
-    const {facilities, isLoadingFacilities} = useAppStore();
+    const {fetchFacilities, facilities, isLoadingFacilities, setFacilitySheetOpen} = useAppStore();
+    const [deleteId, setDeleteId] = useState<string | null>(null);
+
+    useEffect(() => {
+        fetchFacilities(1)
+    }, [fetchFacilities]);
 
     if (isLoadingFacilities) {
         return (
@@ -89,7 +60,7 @@ export default function FacilityPage() {
     }
 
     return (
-        <div className="w-full bg-slate-50/50 min-h-screen p-6">
+        <div className="w-full bg-slate-50/50 min-h-screen">
             {/* Header */}
             <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
@@ -104,7 +75,7 @@ export default function FacilityPage() {
 
             {/* Main Table Card */}
             <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto relative">
                     <Table>
                         <TableHeader className="bg-slate-50/50">
                             <TableRow>
@@ -112,7 +83,10 @@ export default function FacilityPage() {
                                 <TableHead className="w-[250px]">Description</TableHead>
                                 <TableHead className="min-w-[300px]">Amenities Included</TableHead>
                                 <TableHead className="w-[150px]">Last Updated</TableHead>
-                                <TableHead className="text-right w-[100px]">Actions</TableHead>
+                                <TableHead
+                                    className="text-center w-[100px] sticky right-[-0.1px] bg-slate-50 z-20 shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)]">
+                                    Actions
+                                </TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -188,22 +162,33 @@ export default function FacilityPage() {
                                             </TableCell>
 
                                             {/* Date Column */}
-                                            <TableCell className="align-top py-4 text-slate-500 text-xs whitespace-nowrap">
+                                            <TableCell
+                                                className="align-top py-4 text-slate-500 text-xs whitespace-nowrap">
                                                 {facility.updatedAt ? new Date(facility.updatedAt).toLocaleDateString("en-US", {
                                                     month: "short", day: "numeric", year: "numeric"
                                                 }) : "-"}
                                             </TableCell>
 
                                             {/* Actions Column */}
-                                            <TableCell className="align-top py-4 text-right">
+                                            {/*<TableCell className="align-top py-4 text-right">*/}
+                                            <TableCell
+                                                className="align-top py-4 text-right sticky right-[-0.1px] z-10 bg-white group-hover:bg-slate-50 shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)] border-l border-slate-100">
                                                 <div
                                                     className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <Button variant="ghost" size="icon"
-                                                            className="h-8 w-8 text-slate-400 hover:text-blue-600">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8 text-slate-400 hover:text-blue-600"
+                                                        onClick={() => setFacilitySheetOpen(true, facility, "")}
+                                                    >
                                                         <Pencil className="w-4 h-4"/>
                                                     </Button>
-                                                    <Button variant="ghost" size="icon"
-                                                            className="h-8 w-8 text-slate-400 hover:text-red-600">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8 text-slate-400 hover:text-red-600"
+                                                        onClick={() => setDeleteId(facility._id)}
+                                                    >
                                                         <Trash2 className="w-4 h-4"/>
                                                     </Button>
                                                 </div>
@@ -216,6 +201,15 @@ export default function FacilityPage() {
                     </Table>
                 </div>
             </div>
+
+            <FacilitySheet/>
+
+            <DeleteFacilityDialog
+                facilityId={deleteId}
+                open={!!deleteId}
+                onOpenChange={(open) => !open && setDeleteId(null)}
+            />
+
         </div>
     );
 }
