@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    // ... অন্যান্য সেটিং
+
+    // এই অংশটি যোগ/আপডেট করুন
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "module": "esnext",
+    // এই সেটিংটি এররের পরামর্শ অনুযায়ী ঠিক করুন (Vite/Next.js এর জন্য 'bundler' ভালো)
+    "moduleResolution": "bundler",
+    // অথবা যদি 'bundler' কাজ না করে তবে "node" বা "nodenext" দিন
+
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    // Path Alias কনফিগারেশন (@/ এর জন্য)
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    }
+  },
+  "include": [
+    "src",
+    "env.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
