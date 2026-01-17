@@ -52,7 +52,7 @@ const RoomsPage = () => {
     }
 
     return (
-        <div className="container mx-auto py-8">
+        <>
             {/* Header Section */}
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-3xl font-bold tracking-tight">Available Rooms</h2>
@@ -190,7 +190,7 @@ const RoomsPage = () => {
                 onOpenChange={(open) => !open && setDeleteId(null)}
                 roomId={deleteId}
             />
-        </div>
+        </>
     );
 };
 

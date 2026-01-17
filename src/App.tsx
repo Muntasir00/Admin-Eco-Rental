@@ -3,13 +3,13 @@ import AuthGuard from '@/components/auth/AuthGuard';
 import GuestGuard from '@/components/auth/GuestGuard';
 import LoginPage from "@/pages/login-page";
 import DashboardPage from "@/pages/dashboard-page";
-import ProfilePage from "@/pages/profile-page";
 import NotFoundPage from "@/pages/not-found-page";
 import Layout from "@/components/layout";
 import BlogsPage from "@/pages/blogs-page";
 import {Toaster} from "sonner";
 import RoomsPage from "@/pages/rooms-page";
 import FacilityPage from "@/pages/facility-page";
+import BookingListPage from "@/pages/booking-list-page";
 
 
 function App() {
@@ -36,10 +36,10 @@ function App() {
                     }
                 >
                     <Route path="/dashboard" element={<DashboardPage/>}/>
-                    <Route path="/profile" element={<ProfilePage/>}/>
                     <Route path="/blogs" element={<BlogsPage/>}/>
                     <Route path="/rooms" element={<RoomsPage/>}/>
                     <Route path="/facility" element={<FacilityPage/>}/>
+                    <Route path="/booking-list" element={<BookingListPage/>}/>
                 </Route>
 
                 {/* --- Default Redirect --- */}

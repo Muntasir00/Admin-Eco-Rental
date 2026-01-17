@@ -8,6 +8,23 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export const getPageTitle = (path: string) => {
+  switch (path) {
+    case "/dashboard":
+      return "Dashboard Overview";
+    case "/blogs":
+      return "Blog Management";
+    case "/rooms":
+      return "Room List";
+    case "/facility":
+      return "Facility Setup";
+    case "/booking-list":
+      return "Booking History";
+    default:
+      return path.replace("/", "").replace("-", " ").replace(/\b\w/g, c => c.toUpperCase()) || "Dashboard";
+  }
+}
+
 // ----------------------------------------------------------------------
 
 export function jwtDecode(token: string) {
