@@ -1,118 +1,128 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import {clsx, type ClassValue} from "clsx"
+import {twMerge} from "tailwind-merge"
 import {STORAGE_KEY} from "@/utils/constant";
 import axios from "@/utils/axios";
 import {paths} from "@/utils/paths";
+import {format} from "date-fns";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+    return twMerge(clsx(inputs))
 }
 
 export const getPageTitle = (path: string) => {
-  switch (path) {
-    case "/dashboard":
-      return "Dashboard Overview";
-    case "/blogs":
-      return "Blog Management";
-    case "/rooms":
-      return "Room List";
-    case "/facility":
-      return "Facility Setup";
-    case "/booking-list":
-      return "Booking History";
-    default:
-      return path.replace("/", "").replace("-", " ").replace(/\b\w/g, c => c.toUpperCase()) || "Dashboard";
-  }
+    switch (path) {
+        case "/dashboard":
+            return "Dashboard Overview";
+        case "/blogs":
+            return "Blog Management";
+        case "/rooms":
+            return "Room List";
+        case "/facility":
+            return "Facility Setup";
+        case "/booking-list":
+            return "Booking History";
+        default:
+            return path.replace("/", "").replace("-", " ").replace(/\b\w/g, c => c.toUpperCase()) || "Dashboard";
+    }
 }
+
+export const formatDate = (date: string) => {
+    try {
+        return format(new Date(date), "MMM dd, yyyy");
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (e) {
+        return date;
+    }
+};
 
 // ----------------------------------------------------------------------
 
 export function jwtDecode(token: string) {
-  try {
-    if (!token) return null;
+    try {
+        if (!token) return null;
 
-    const parts = token.split('.');
-    if (parts.length < 2) {
-      throw new Error('Invalid token!');
+        const parts = token.split('.');
+        if (parts.length < 2) {
+            throw new Error('Invalid token!');
+        }
+
+        const base64Url = parts[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const decoded = JSON.parse(atob(base64));
+
+        return decoded;
+    } catch (error) {
+        console.error('Error decoding token:', error);
+        throw error;
     }
-
-    const base64Url = parts[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const decoded = JSON.parse(atob(base64));
-
-    return decoded;
-  } catch (error) {
-    console.error('Error decoding token:', error);
-    throw error;
-  }
 }
 
 // ----------------------------------------------------------------------
 
 export function isValidToken(accessToken: string) {
-  if (!accessToken) {
-    return false;
-  }
-
-  try {
-    const decoded = jwtDecode(accessToken);
-
-    if (!decoded || !('exp' in decoded)) {
-      return false;
+    if (!accessToken) {
+        return false;
     }
 
-    const currentTime = Date.now() / 1000;
+    try {
+        const decoded = jwtDecode(accessToken);
 
-    return decoded.exp > currentTime;
-  } catch (error) {
-    console.error('Error during token validation:', error);
-    return false;
-  }
+        if (!decoded || !('exp' in decoded)) {
+            return false;
+        }
+
+        const currentTime = Date.now() / 1000;
+
+        return decoded.exp > currentTime;
+    } catch (error) {
+        console.error('Error during token validation:', error);
+        return false;
+    }
 }
 
 // ----------------------------------------------------------------------
 
 export function tokenExpired(exp: number) {
-  if (!exp) {
-    exp = 3;
-  }
-  const currentTime = Date.now();
-  const timeLeft = exp * 1000 - currentTime;
-
-  setTimeout(() => {
-    try {
-      alert('Token expired!');
-      sessionStorage.removeItem(STORAGE_KEY);
-      window.location.href = paths.auth.jwt.signIn;
-    } catch (error) {
-      console.error('Error during token expiration:', error);
-      throw error;
+    if (!exp) {
+        exp = 3;
     }
-  }, timeLeft);
+    const currentTime = Date.now();
+    const timeLeft = exp * 1000 - currentTime;
+
+    setTimeout(() => {
+        try {
+            alert('Token expired!');
+            sessionStorage.removeItem(STORAGE_KEY);
+            window.location.href = paths.auth.jwt.signIn;
+        } catch (error) {
+            console.error('Error during token expiration:', error);
+            throw error;
+        }
+    }, timeLeft);
 }
 
 // ----------------------------------------------------------------------
 
 export async function setSession(accessToken: string | null) {
-  try {
-    if (accessToken) {
-      sessionStorage.setItem(STORAGE_KEY, accessToken);
+    try {
+        if (accessToken) {
+            sessionStorage.setItem(STORAGE_KEY, accessToken);
 
-      axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+            axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
 
-      const decodedToken = jwtDecode(accessToken); // ~3 days by minimals server
+            const decodedToken = jwtDecode(accessToken); // ~3 days by minimals server
 
-      if (decodedToken && 'exp' in decodedToken) {
-        tokenExpired(decodedToken.exp);
-      } else {
-        throw new Error('Invalid access token!');
-      }
-    } else {
-      sessionStorage.removeItem(STORAGE_KEY);
-      delete axios.defaults.headers.common.Authorization;
+            if (decodedToken && 'exp' in decodedToken) {
+                tokenExpired(decodedToken.exp);
+            } else {
+                throw new Error('Invalid access token!');
+            }
+        } else {
+            sessionStorage.removeItem(STORAGE_KEY);
+            delete axios.defaults.headers.common.Authorization;
+        }
+    } catch (error) {
+        console.error('Error during set session:', error);
+        throw error;
     }
-  } catch (error) {
-    console.error('Error during set session:', error);
-    throw error;
-  }
 }

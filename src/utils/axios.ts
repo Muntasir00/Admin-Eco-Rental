@@ -83,6 +83,9 @@ export const endpoints = {
         createFacilities: '/facilities/create',
         updateFacilities: '/facilities',
         deleteFacilities: '/facilities',
+    },
+    booking:{
+        getAllBookings: '/bookings/bookings-list',
     }
 
 
