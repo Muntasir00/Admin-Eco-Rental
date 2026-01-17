@@ -3,11 +3,12 @@
     // ... অন্যান্য সেটিং
 
     // এই অংশটি যোগ/আপডেট করুন
-    "target": "es5",
+    "target": "es2017",
     "lib": [
       "dom",
       "dom.iterable",
-      "esnext"
+      "esnext",
+      "ES2017"
     ],
     "allowJs": true,
     "skipLibCheck": true,

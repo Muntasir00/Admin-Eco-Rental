@@ -21,9 +21,18 @@ import {
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import DeleteConfirmRoomDialog from "@/components/rooms/delete-confirm-room-dialog";
+import FacilitySheet from "@/components/facilities/facility-sheet";
 
 const RoomsPage = () => {
-    const {rooms, fetchRooms, isLoadingRooms, setRoomSheetOpen, roomPagination, setCreateRoomSheetOpen} = useAppStore();
+    const {
+        rooms,
+        fetchRooms,
+        isLoadingRooms,
+        setRoomSheetOpen,
+        roomPagination,
+        setCreateRoomSheetOpen,
+        setFacilitySheetOpen
+    } = useAppStore();
     const [deleteId, setDeleteId] = useState<string | null>(null);
 
     useEffect(() => {
@@ -147,17 +156,21 @@ const RoomsPage = () => {
                                 <p className="text-xs text-muted-foreground">Price per night</p>
                                 <p className="text-lg font-bold text-primary">${room.pricePerNight}</p>
                             </div>
-                            <Button
-                                size="sm"
-                                onClick={() => setRoomSheetOpen(true, room)}
-                                variant="outline"
-                            >
-                                View Details
-                            </Button>
+                            {!room.hasFacility &&
+                                <Button
+                                    size="sm"
+                                    onClick={() => setFacilitySheetOpen(true, null, room._id)}
+                                    variant="outline"
+                                >
+                                    Create Facility
+                                </Button>
+                            }
                         </CardFooter>
                     </Card>
                 ))}
             </div>
+
+            <FacilitySheet/>
 
             {/* Pagination Controls */}
             <Pagination

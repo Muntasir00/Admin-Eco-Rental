@@ -9,6 +9,7 @@ import Layout from "@/components/layout";
 import BlogsPage from "@/pages/blogs-page";
 import {Toaster} from "sonner";
 import RoomsPage from "@/pages/rooms-page";
+import FacilityPage from "@/pages/facility-page";
 
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
                     <Route path="/profile" element={<ProfilePage/>}/>
                     <Route path="/blogs" element={<BlogsPage/>}/>
                     <Route path="/rooms" element={<RoomsPage/>}/>
+                    <Route path="/facility" element={<FacilityPage/>}/>
                 </Route>
 
                 {/* --- Default Redirect --- */}

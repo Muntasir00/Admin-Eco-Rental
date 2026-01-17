@@ -1,11 +1,12 @@
 import axios from 'axios';
-import { CONFIG } from "@/utils/config-global";
-import { STORAGE_KEY } from "@/utils/constant";
-import type { AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
+import {CONFIG} from "@/utils/config-global";
+import {STORAGE_KEY} from "@/utils/constant";
+import type {AxiosRequestConfig, InternalAxiosRequestConfig} from 'axios';
+import {getFacilities} from "@/utils/facilities-actions";
 
 // ----------------------------------------------------------------------
 
-const axiosInstance = axios.create({ baseURL: CONFIG.site.serverUrl });
+const axiosInstance = axios.create({baseURL: CONFIG.site.serverUrl});
 
 // Request Interceptor
 // Axios v1+ এ 'InternalAxiosRequestConfig' ব্যবহার করা ভালো
@@ -40,7 +41,7 @@ export const fetcher = async (args: string | [string, AxiosRequestConfig]) => {
     try {
         const [url, config] = Array.isArray(args) ? args : [args];
 
-        const res = await axiosInstance.get(url, { ...config });
+        const res = await axiosInstance.get(url, {...config});
 
         return res.data;
     } catch (error) {
@@ -75,5 +76,14 @@ export const endpoints = {
 
         availability: '/availability/rooms',
         bookings: '/bookings',
+    },
+    facilities: {
+        getAllFacilities: '/facilities',
+        getSingleFacilities: '/facilities/room',
+        createFacilities: '/facilities/create',
+        updateFacilities: '/facilities',
+        deleteFacilities: '/facilities',
     }
+
+
 };

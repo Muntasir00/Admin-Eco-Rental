@@ -58,6 +58,11 @@ const data = {
             url: "/rooms",
             icon: Users,
         },
+        {
+            title: "Facility",
+            url: "/facility",
+            icon: FolderTree,
+        },
     ],
 }
 

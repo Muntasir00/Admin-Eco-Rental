@@ -66,6 +66,7 @@ export interface Room {
     availableRooms: number;
     pricePerNight: number;
     available: boolean;
+    hasFacility: boolean;
     guest: number;
     images: RoomImage[];
     createdAt: string;
@@ -82,4 +83,39 @@ export interface RoomPagination {
 export interface RoomResponse {
     rooms: Room[];
     pagination: Pagination;
+}
+
+export interface FacilityItem {
+    _id: string;
+    name: string;
+    description?: string;
+}
+
+export interface Facility {
+    _id: string;
+    room: string; // Room ID
+    facilityType: string;
+    facilityDetails?: string;
+    facilityList: FacilityItem[];
+    createdAt?: string;
+    updatedAt?: string;
+}
+
+export interface FacilityPayload {
+    room: string;
+    facilityType: string;
+    facilityDetails?: string;
+    facilityList: FacilityItem[];
+}
+
+export interface FacilityResponse {
+    facilities: Facility[];
+    pagination: FacilityPagination;
+}
+
+export interface FacilityPagination {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
 }
