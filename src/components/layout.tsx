@@ -16,8 +16,14 @@ import {
 import {Outlet} from "react-router";
 
 export default function Layout() {
+    const cookieValue = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('sidebar:state='))
+        ?.split('=')[1]
+
+    const defaultOpen = cookieValue === 'true'
     return (
-        <SidebarProvider>
+        <SidebarProvider defaultOpen={defaultOpen}>
             <AppSidebar/>
             <SidebarInset>
                 <header

@@ -1,15 +1,15 @@
 import * as React from "react"
 import {
-    AudioWaveform,
-    Briefcase,
-    Command, FolderTree,
-    GalleryVerticalEnd, LayoutDashboard,
-    UserCog, Users,
+    LayoutGrid,
+    BookOpenIcon,
+    Cuboid,
+    Building2, CalendarCheck2
 } from "lucide-react"
+import Logo from "@/assets/logo.png"
 
-import { NavMain } from "@/components/nav-main"
-import { NavUser } from "@/components/nav-user"
-import { TeamSwitcher } from "@/components/team-switcher"
+import {NavMain} from "@/components/nav-main"
+import {NavUser} from "@/components/nav-user"
+import {TeamSwitcher} from "@/components/team-switcher"
 import {
     Sidebar,
     SidebarContent,
@@ -27,58 +27,53 @@ const data = {
     },
     teams: [
         {
-            name: "Acme Inc",
-            logo: GalleryVerticalEnd,
+            name: "Lon",
+            logo: Logo,
             plan: "Enterprise",
-        },
-        {
-            name: "Acme Corp.",
-            logo: AudioWaveform,
-            plan: "Startup",
-        },
-        {
-            name: "Evil Corp.",
-            logo: Command,
-            plan: "Free",
         },
     ],
     navMain: [
         {
             title: "Dashboard",
             url: "/dashboard",
-            icon: LayoutDashboard,
+            icon: LayoutGrid,
         },
         {
             title: "Blogs",
             url: "/blogs",
-            icon: FolderTree,
+            icon: BookOpenIcon,
         },
         {
             title: "Rooms",
             url: "/rooms",
-            icon: Users,
+            icon: Cuboid,
         },
         {
             title: "Facility",
             url: "/facility",
-            icon: FolderTree,
+            icon: Building2,
+        },
+        {
+            title: "Booking List",
+            url: "/booking-list",
+            icon: CalendarCheck2,
         },
     ],
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
     return (
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
-                <TeamSwitcher teams={data.teams} />
+                <TeamSwitcher teams={data.teams}/>
             </SidebarHeader>
             <SidebarContent>
-                <NavMain items={data.navMain} />
+                <NavMain items={data.navMain}/>
             </SidebarContent>
             <SidebarFooter>
-                <NavUser />
+                <NavUser/>
             </SidebarFooter>
-            <SidebarRail />
+            <SidebarRail/>
         </Sidebar>
     )
 }

@@ -41,7 +41,7 @@ export function NavMain({items}: NavMainProps) {
                                         tooltip={item.title}
                                     >
                                         <Link to={item.url}>
-                                            <item.icon/>
+                                            <item.icon strokeWidth={1.5} className="size-5"/>
                                             <span>{item.title}</span>
                                         </Link>
                                     </SidebarMenuButton>
