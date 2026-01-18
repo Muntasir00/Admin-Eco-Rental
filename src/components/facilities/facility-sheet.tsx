@@ -35,8 +35,8 @@ export default function FacilitySheet() {
         isFacilitySheetOpen,
         setFacilitySheetOpen,
         selectedFacility,
-        addFacility,
-        editFacility,
+        createFacility,
+        updateFacility,
         isSubmitting,
         selectedRoomIdForCreate,
     } = useAppStore();
@@ -56,7 +56,6 @@ export default function FacilitySheet() {
         control: form.control,
         name: "facilityList"
     });
-    console.log(selectedRoomIdForCreate)
 
     // 3. Populate Form for Edit Mode
     useEffect(() => {
@@ -84,11 +83,11 @@ export default function FacilitySheet() {
     const onSubmit = async (data: FacilityFormValues) => {
         try {
             if (selectedFacility) {
-                await editFacility(selectedFacility._id, data);
+                await updateFacility(selectedFacility._id, data);
                 toast.success("Facility updated successfully!");
             } else {
                 console.log(data)
-                await addFacility(data);
+                await createFacility(data);
                 toast.success("Facility created successfully!");
             }
         } catch (error: any) {

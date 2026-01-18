@@ -62,7 +62,7 @@ export default function RoomSheet() {
 
                         <div
                             className="rounded-xl overflow-hidden border shadow-sm aspect-video relative group bg-muted">
-                            {selectedRoom.images.length > 1 ? (
+                            {selectedRoom.images.length > 0 ? (
                                 // ১. মাল্টিপল ইমেজ থাকলে ক্যারোসেল দেখাবে
                                 <Carousel
                                     setApi={setApi}

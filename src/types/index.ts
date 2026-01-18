@@ -22,11 +22,17 @@ export interface AuthState {
     loading: boolean;
 }
 
+export type BlogImage = {
+    _id: string;
+    url: string;
+    publicId: string;
+};
+
 export interface Blog {
     _id: string;
     title: string;
     content: string;
-    imageUrl: string;
+    images: BlogImage[];
     imagePublicId?: string;
     createdAt: string;
     updatedAt: string;

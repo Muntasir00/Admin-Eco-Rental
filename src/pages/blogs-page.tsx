@@ -12,23 +12,23 @@ import {BlogPagination} from "@/components/blogs/blog-pagination";
 const BlogsPage = () => {
     const {
         blogs,
-        fetchBlogs,
+        getBlogs,
         pagination,
         isLoadingBlogs,
-        setSheetOpen
+        setFormOpen
     } = useAppStore();
     const [view, setView] = useState<"table" | "grid">("table");
 
     // প্রথমবার লোড হলে ১ নম্বর পেজ কল হবে
     useEffect(() => {
-        fetchBlogs(1);
-    }, [fetchBlogs]);
+        getBlogs(1);
+    }, [getBlogs]);
 
     console.log(blogs);
 
     // পেজ পরিবর্তনের হ্যান্ডলার
     const handlePageChange = (page: number) => {
-        fetchBlogs(page);
+        getBlogs(page);
         // পেজ চেঞ্জ হলে উপরে স্ক্রল করবে
         window.scrollTo({top: 0, behavior: 'smooth'});
     };
@@ -51,7 +51,7 @@ const BlogsPage = () => {
                         </TabsList>
                     </Tabs>
 
-                    <Button onClick={() => setSheetOpen(true, null)} >
+                    <Button onClick={() => setFormOpen(true, null)} >
                         <Plus className="mr-2 h-4 w-4"/> Add New
                     </Button>
                 </div>

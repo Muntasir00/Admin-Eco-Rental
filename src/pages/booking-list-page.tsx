@@ -23,7 +23,7 @@ export default function BookingListPage() {
 
     const {
         bookings,
-        fetchBookings,
+        getBookings,
         bookingPagination,
         isLoadingBookings,
         setBookingSheetOpen,
@@ -39,8 +39,8 @@ export default function BookingListPage() {
 
         setBookingFilters({search, status});
 
-        fetchBookings(page);
-    }, [searchParams, fetchBookings, setBookingFilters]);
+        getBookings(page);
+    }, [searchParams, getBookings, setBookingFilters]);
 
     console.log(bookings)
 

@@ -1,6 +1,6 @@
 import { StateCreator } from 'zustand';
 import { Booking, BookingPagination } from "@/types/booking";
-import { getBookings } from "@/utils/booking-actions";
+import {bookingService} from "@/services/booking.service";
 
 export interface BookingSlice {
     bookings: Booking[];
@@ -9,17 +9,14 @@ export interface BookingSlice {
     selectedBooking: Booking | null;
     isBookingSheetOpen: boolean;
 
-    // ১. ফিল্টার স্টেট যোগ করা
     bookingFilters: {
         search: string;
         status: string;
     };
 
     // Actions
-    fetchBookings: (page?: number) => Promise<void>;
+    getBookings: (page?: number) => Promise<void>;
     setBookingSheetOpen: (open: boolean, booking?: Booking | null) => void;
-
-    // ২. ফিল্টার আপডেট করার অ্যাকশন
     setBookingFilters: (filters: Partial<{ search: string; status: string }>) => void;
 }
 
@@ -30,21 +27,19 @@ export const createBookingSlice: StateCreator<BookingSlice> = (set, get) => ({
     selectedBooking: null,
     isBookingSheetOpen: false,
 
-    // ডিফল্ট ফিল্টার
     bookingFilters: {
         search: "",
         status: "all"
     },
 
-    fetchBookings: async (page = 1) => {
+    getBookings: async (page = 1) => {
         set({ isLoadingBookings: true });
 
-        // ৩. বর্তমান ফিল্টার স্টেট থেকে ভ্যালু নেওয়া
         const { search, status } = get().bookingFilters;
 
         try {
             // API তে search ও status পাঠানো
-            const data = await getBookings(page, search, status);
+            const data = await bookingService.getAll({ page, search, status });
             set({
                 bookings: data.bookings,
                 bookingPagination: data.pagination,
@@ -60,13 +55,11 @@ export const createBookingSlice: StateCreator<BookingSlice> = (set, get) => ({
         set({ isBookingSheetOpen: open, selectedBooking: booking });
     },
 
-    // ৪. ফিল্টার সেট করার লজিক (সাথে সাথে পেজ ১ এ রিসেট হবে)
     setBookingFilters: (newFilters) => {
         set((state) => ({
             bookingFilters: { ...state.bookingFilters, ...newFilters }
         }));
-        // ফিল্টার চেঞ্জ হলে ১ নম্বর পেজ থেকে ডাটা আনবে
-        get().fetchBookings(1);
+        get().getBookings(1);
     }
 });
 

@@ -19,11 +19,11 @@ interface Props {
 }
 
 const DeleteConfirmDialog = ({open, onOpenChange, blogId}: Props) => {
-    const {removeBlog, isDeleting} = useAppStore();
+    const {deleteBlog, isDeleting} = useAppStore();
 
     const handleDelete = async () => {
         if (blogId) {
-            await removeBlog(blogId);
+            await deleteBlog(blogId);
             onOpenChange(false);
             toast.success("Blog Deleted successfully.");
         }

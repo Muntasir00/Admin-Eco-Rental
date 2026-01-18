@@ -26,7 +26,7 @@ import FacilitySheet from "@/components/facilities/facility-sheet";
 const RoomsPage = () => {
     const {
         rooms,
-        fetchRooms,
+        getRooms,
         isLoadingRooms,
         setRoomSheetOpen,
         roomPagination,
@@ -36,13 +36,13 @@ const RoomsPage = () => {
     const [deleteId, setDeleteId] = useState<string | null>(null);
 
     useEffect(() => {
-        fetchRooms(1);
-    }, [fetchRooms]);
+        getRooms(1);
+    }, [getRooms]);
 
     // পেজ চেঞ্জ হ্যান্ডলার
     const handlePageChange = (page: number) => {
         if (page > 0 && page <= roomPagination.totalPages) {
-            fetchRooms(page);
+            getRooms(page);
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
     };
@@ -181,6 +181,7 @@ const RoomsPage = () => {
             />
 
             <CreateUpdateRoomSheet/>
+
             {/* Render the Sheet Component here */}
             <RoomSheet/>
 

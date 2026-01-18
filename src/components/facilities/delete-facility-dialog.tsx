@@ -19,11 +19,11 @@ interface Props {
 }
 
 const DeleteFacilityDialog = ({open, onOpenChange, facilityId}: Props) => {
-    const {removeFacility, isDeleting} = useAppStore();
+    const {deleteFacility, isDeleting} = useAppStore();
 
     const handleDelete = async () => {
         if (facilityId) {
-            await removeFacility(facilityId);
+            await deleteFacility(facilityId);
             onOpenChange(false);
             toast.success("Facility Deleted successfully.");
         }

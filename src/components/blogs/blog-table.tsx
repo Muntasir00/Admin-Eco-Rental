@@ -4,13 +4,12 @@ import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
 import {Button} from "@/components/ui/button";
 import {MoreHorizontal, Edit, Trash2, Eye} from "lucide-react";
 import {Avatar, AvatarImage, AvatarFallback} from "@/components/ui/avatar";
-import {Link} from "react-router";
 import DeleteConfirmDialog from "@/components/blogs/delete-confirm-dialog";
 import {useState} from "react";
 import BlogViewSheet from "@/components/blogs/blog-view-sheet";
 
 const BlogTable = () => {
-    const {blogs, setSheetOpen, setBlogSheetOpen} = useAppStore();
+    const {blogs, setFormOpen, setDetailsOpen} = useAppStore();
     const [deleteId, setDeleteId] = useState<string | null>(null);
 
     return (
@@ -35,7 +34,10 @@ const BlogTable = () => {
                                 </TableCell>
                                 <TableCell>
                                     <Avatar className="h-10 w-10 rounded-md">
-                                        <AvatarImage src={blog.imageUrl} className="object-cover"/>
+                                        <AvatarImage
+                                            src={blog.images[0]?.url}
+                                            className="object-cover"
+                                        />
                                         <AvatarFallback>IMG</AvatarFallback>
                                     </Avatar>
                                 </TableCell>
@@ -54,14 +56,16 @@ const BlogTable = () => {
                                             </Button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
-                                            <DropdownMenuItem onClick={() => setBlogSheetOpen(true, blog)}>
+                                            <DropdownMenuItem className="cursor-pointer"
+                                                              onClick={() => setDetailsOpen(true, blog)}>
                                                 <Eye className="mr-2 h-4 w-4"/> View
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem onClick={() => setSheetOpen(true, blog)}>
+                                            <DropdownMenuItem className="cursor-pointer"
+                                                              onClick={() => setFormOpen(true, blog)}>
                                                 <Edit className="mr-2 h-4 w-4"/> Edit
                                             </DropdownMenuItem>
                                             <DropdownMenuItem
-                                                className="text-red-600"
+                                                className="text-red-600 cursor-pointer"
                                                 onClick={() => setDeleteId(blog._id)}
                                             >
                                                 <Trash2 className="mr-2 h-4 w-4"/> Delete

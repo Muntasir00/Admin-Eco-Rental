@@ -19,11 +19,11 @@ interface Props {
 }
 
 const DeleteConfirmRoomDialog = ({open, onOpenChange, roomId}: Props) => {
-    const {removeRoom, isDeleting} = useAppStore();
+    const {deleteRoom, isDeleting} = useAppStore();
 
     const handleDelete = async () => {
         if (roomId) {
-            await removeRoom(roomId);
+            await deleteRoom(roomId);
             onOpenChange(false);
             toast.success("Room Deleted successfully.");
         }

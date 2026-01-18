@@ -16,7 +16,7 @@ import {Badge} from "@/components/ui/badge";
 import BlogViewSheet from "@/components/blogs/blog-view-sheet";
 
 const BlogGrid = () => {
-    const {blogs, setSheetOpen, setBlogSheetOpen} = useAppStore();
+    const {blogs, setFormOpen, setDetailsOpen} = useAppStore();
     const [deleteId, setDeleteId] = useState<string | null>(null);
 
     return (
@@ -31,7 +31,7 @@ const BlogGrid = () => {
                         <div className="relative aspect-[16/9] w-full overflow-hidden">
                             {/* Image */}
                             <img
-                                src={blog.imageUrl}
+                                src={blog.images[0].url}
                                 alt={blog.title}
                                 className="h-full w-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
                             />
@@ -56,7 +56,7 @@ const BlogGrid = () => {
                                     <DropdownMenuContent align="end" className="w-40">
                                         <DropdownMenuItem
                                             className="cursor-pointer"
-                                            onClick={() => setBlogSheetOpen(true, blog)}
+                                            onClick={() => setDetailsOpen(true, blog)}
                                         >
                                             <Eye className="mr-2 h-4 w-4"/> View Details
                                         </DropdownMenuItem>
@@ -64,7 +64,7 @@ const BlogGrid = () => {
                                         {/* Edit & Delete (যদি দরকার হয় আনকমেন্ট করুন) */}
                                         <DropdownMenuItem
                                             className="cursor-pointer"
-                                            onClick={() => setSheetOpen(true, blog)}
+                                            onClick={() => setFormOpen(true, blog)}
                                         >
                                             <Edit className="mr-2 h-4 w-4"/> Edit
                                         </DropdownMenuItem>

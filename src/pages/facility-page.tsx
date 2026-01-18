@@ -40,12 +40,12 @@ const getAmenityIcon = (name: string) => {
 
 
 export default function FacilityPage() {
-    const {fetchFacilities, facilities, isLoadingFacilities, setFacilitySheetOpen} = useAppStore();
+    const {getFacilities, facilities, isLoadingFacilities, setFacilitySheetOpen} = useAppStore();
     const [deleteId, setDeleteId] = useState<string | null>(null);
 
     useEffect(() => {
-        fetchFacilities(1)
-    }, [fetchFacilities]);
+        getFacilities(1)
+    }, [getFacilities]);
 
     if (isLoadingFacilities) {
         return (

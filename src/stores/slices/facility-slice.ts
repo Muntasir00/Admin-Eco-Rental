@@ -1,29 +1,27 @@
 import {StateCreator} from 'zustand';
 import {Facility, FacilityPagination} from "@/types";
-import {
-    getFacilities,
-    createFacility,
-    updateFacility,
-    deleteFacilityApi
-} from "@/utils/facilities-actions";
 import {RoomSlice} from "@/stores/slices/room-slice";
+import {facilityService} from "@/services/facility.service";
 
 export interface FacilitySlice {
     facilities: Facility[];
     facilityPagination: FacilityPagination;
+
+    // Loading States
     isLoadingFacilities: boolean;
-    isFacilitySheetOpen: boolean;
-    selectedFacility: Facility | null;
     isSubmitting: boolean;
     isDeleting: boolean;
 
+    // UI States
+    isFacilitySheetOpen: boolean;
+    selectedFacility: Facility | null;
     selectedRoomIdForCreate: string | null;
 
     // Actions
-    fetchFacilities: (page: number) => Promise<void>;
-    addFacility: (data: any) => Promise<void>;
-    editFacility: (id: string, data: any) => Promise<void>;
-    removeFacility: (id: string) => Promise<void>;
+    getFacilities: (page: number) => Promise<void>;
+    createFacility: (data: any) => Promise<void>;
+    updateFacility: (id: string, data: any) => Promise<void>;
+    deleteFacility: (id: string) => Promise<void>;
 
     setFacilitySheetOpen: (open: boolean, facility?: Facility | null, roomId?: string) => void;
 }
@@ -40,10 +38,10 @@ export const createFacilitySlice: StateCreator<StoreState, [], [], FacilitySlice
     selectedRoomIdForCreate: null,
     isDeleting: false,
 
-    fetchFacilities: async (page = 1) => {
+    getFacilities: async (page = 1) => {
         set({isLoadingFacilities: true});
         try {
-            const data = await getFacilities(page);
+            const data = await facilityService.getAll(page);
             set({
                 facilities: data.facilities,
                 facilityPagination: data.pagination,
@@ -55,25 +53,31 @@ export const createFacilitySlice: StateCreator<StoreState, [], [], FacilitySlice
         }
     },
 
-    addFacility: async (data) => {
+    createFacility: async (data) => {
         set({isSubmitting: true});
         try {
-            await createFacility(data);
-            await get().fetchFacilities(1);
+            await facilityService.create(data);
+            // লিস্ট রিফ্রেশ
+            await get().getFacilities(1);
+
+            // 🔥 Cross-Slice Logic: RoomSlice এর rooms আপডেট করা
+            // যেহেতু set() গ্লোবাল স্টেটে কাজ করে, তাই আমরা এখানে rooms আপডেট করতে পারছি
             const currentRooms = get().rooms;
-            const updatedRooms = currentRooms.map((room) => {
-                if (room._id === data.room) {
-                    return {
-                        ...room,
-                        hasFacility: true,
+            if (currentRooms && currentRooms.length > 0) {
+                const updatedRooms = currentRooms.map((room) => {
+                    if (room._id === data.room) {
+                        return {...room, hasFacility: true};
                     }
-                }
-                return room;
-            });
+                    return room;
+                });
+                // TypeScript এরর এড়াতে 'as any' বা Partial ব্যবহার করা যেতে পারে যদি টাইপ না মিলে
+                set({rooms: updatedRooms} as Partial<StoreState>);
+            }
+
             set({
-                rooms: updatedRooms,
                 isFacilitySheetOpen: false,
-                isSubmitting: false
+                isSubmitting: false,
+                selectedRoomIdForCreate: null // রিসেট করা ভালো
             });
         } catch (error) {
             set({isSubmitting: false});
@@ -81,12 +85,14 @@ export const createFacilitySlice: StateCreator<StoreState, [], [], FacilitySlice
         }
     },
 
-    editFacility: async (id, data) => {
+    updateFacility: async (id, data) => {
         set({isSubmitting: true});
         try {
-            await updateFacility(id, data);
-            // await get().fetchFacilities(1); // Refresh list
-            await get().fetchFacilities(get().facilityPagination.page);
+            await facilityService.update(id, data);
+
+            // বর্তমান পেজ রিফ্রেশ
+            await get().getFacilities(get().facilityPagination.page);
+
             set({isFacilitySheetOpen: false, selectedFacility: null, isSubmitting: false});
         } catch (error) {
             set({isSubmitting: false});
@@ -94,24 +100,31 @@ export const createFacilitySlice: StateCreator<StoreState, [], [], FacilitySlice
         }
     },
 
-    removeFacility: async (id) => {
+    deleteFacility: async (id) => {
         set({isDeleting: true});
+
         const previousFacilities = get().facilities;
+
+        // Optimistic Update
         set({facilities: previousFacilities.filter(f => f._id !== id)});
 
         try {
-            await deleteFacilityApi(id);
-            const currentPagination = get().facilityPagination
-            const currentFacilities = get().facilities;
+            await facilityService.delete(id);
 
+            const currentPagination = get().facilityPagination;
+            const currentFacilities = get().facilities; // Already filtered
+
+            // Pagination Logic
             if (currentFacilities.length === 0 && currentPagination.page > 1) {
-                await get().fetchFacilities(currentPagination.page - 1);
+                await get().getFacilities(currentPagination.page - 1);
             } else {
-                await get().fetchFacilities(currentPagination.page);
+                await get().getFacilities(currentPagination.page);
             }
 
+            set({isDeleting: false});
         } catch (error) {
-            console.log(error);
+            console.error(error);
+            // Revert on error
             set({
                 facilities: previousFacilities,
                 isDeleting: false

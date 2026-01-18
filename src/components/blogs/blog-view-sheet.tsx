@@ -1,14 +1,26 @@
 import {useAppStore} from "@/stores/slices/store";
 import {Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle} from "@/components/ui/sheet";
 import {ScrollArea} from "@/components/ui/scroll-area";
-import {CalendarDays, Clock, ImageIcon} from "lucide-react";
+import {CalendarDays, Clock} from "lucide-react";
 import {Separator} from "@/components/ui/separator";
 import {Button} from "@/components/ui/button";
+import {
+    Carousel,
+    type CarouselApi,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious
+} from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
+import {useEffect, useState} from "react";
 
 export default function BlogViewSheet() {
-    const {isBlogSheetOpen, setBlogSheetOpen, selectedSingleBlog} = useAppStore();
+    const {isDetailsOpen, setDetailsOpen, selectedSingleBlog} = useAppStore();
+    const [api, setApi] = useState<CarouselApi>();
+    const [current, setCurrent] = useState(0);
+    const [count, setCount] = useState(0);
 
-    if (!selectedSingleBlog) return null;
 
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString("en-US", {
@@ -18,8 +30,21 @@ export default function BlogViewSheet() {
         });
     };
 
+    useEffect(() => {
+        if (!api) return;
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setCount(api.scrollSnapList().length);
+        setCurrent(api.selectedScrollSnap() + 1);
+
+        api.on("select", () => {
+            setCurrent(api.selectedScrollSnap() + 1);
+        });
+    }, [api]);
+
+    if (!selectedSingleBlog) return null;
+
     return (
-        <Sheet open={isBlogSheetOpen} onOpenChange={(open) => setBlogSheetOpen(open)}>
+        <Sheet open={isDetailsOpen} onOpenChange={(open) => setDetailsOpen(open)}>
             <SheetContent className="sm:max-w-xl w-full p-0 flex flex-col h-full">
                 {/* 1. Header Area */}
                 <SheetHeader className="px-6 py-4 border-b">
@@ -37,18 +62,53 @@ export default function BlogViewSheet() {
                         {/* Image Section (Hero) */}
                         <div
                             className="relative w-full aspect-video rounded-xl overflow-hidden shadow-sm border bg-muted">
-                            {selectedSingleBlog?.imageUrl ? (
-                                <img
-                                    src={selectedSingleBlog.imageUrl}
-                                    alt={selectedSingleBlog.title}
-                                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
-                                />
-                            ) : (
-                                <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-                                    <ImageIcon className="w-10 h-10 mb-2 opacity-50"/>
-                                    <span>No Image Available</span>
-                                </div>
-                            )}
+                            {/*{selectedSingleBlog?.imageUrl ? (*/}
+                                {selectedSingleBlog.images.length > 0 ? (
+                                        // ১. মাল্টিপল ইমেজ থাকলে ক্যারোসেল দেখাবে
+                                        <Carousel
+                                            setApi={setApi}
+                                            className="w-full h-full"
+                                            plugins={[
+                                                Autoplay({
+                                                    delay: 2000,
+                                                }),
+                                            ]}
+                                        >
+                                            <CarouselContent className="h-full">
+                                                {selectedSingleBlog.images.map((img, index) => (
+                                                    <CarouselItem key={index} className="h-full">
+                                                        <img
+                                                            src={img.url}
+                                                            alt={`${selectedSingleBlog.title} - ${index + 1}`}
+                                                            className="w-full h-full object-cover"
+                                                        />
+                                                    </CarouselItem>
+                                                ))}
+                                            </CarouselContent>
+
+                                            {/* নেভিগেশন বাটন (ইমেজের উপরে ভাসমান) */}
+                                            <CarouselPrevious
+                                                className="absolute left-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-0"/>
+                                            <CarouselNext
+                                                className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-0"/>
+
+                                            {/* ডাইনামিক কাউন্টার */}
+                                            <div
+                                                className="absolute bottom-3 right-3 bg-black/60 backdrop-blur-sm text-white text-xs px-2.5 py-1 rounded-full font-medium">
+                                                {current} / {count}
+                                            </div>
+                                        </Carousel>
+                                    ) : (
+                                        // ২. সিঙ্গেল ইমেজ থাকলে সাধারণ img ট্যাগ (পারফরমেন্সের জন্য ভালো)
+                                        <>
+                                            <img
+                                                src={selectedSingleBlog.images[0]?.url || "/placeholder.png"}
+                                                alt={selectedSingleBlog.title}
+                                                className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                                            />
+                                            {/* ইমেজ না থাকলে বা ১টি থাকলে কাউন্টার দেখানোর দরকার নেই, অথবা চাইলে ১/১ দেখাতে পারেন */}
+                                        </>
+                                    )}
                         </div>
 
                         {/* Meta Data (Date & Tags) */}
@@ -89,7 +149,7 @@ export default function BlogViewSheet() {
                         ID: <code
                         className="ml-2 bg-muted px-1 py-0.5 rounded">{selectedSingleBlog?._id.slice(-6)}...</code>
                     </div>
-                    <Button variant="outline" onClick={() => setBlogSheetOpen(false)}>
+                    <Button variant="outline" onClick={() => setDetailsOpen(false)}>
                         Close
                     </Button>
                 </SheetFooter>

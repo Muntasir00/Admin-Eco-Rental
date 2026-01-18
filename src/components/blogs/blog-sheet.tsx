@@ -24,7 +24,7 @@ export const blogFormSchema = z.object({
 export type BlogFormValues = z.infer<typeof blogFormSchema>;
 
 const BlogSheet = () => {
-    const {isSheetOpen, setSheetOpen, selectedBlog, addBlog, editBlog, isSubmitting} = useAppStore();
+    const {isFormOpen, setFormOpen, selectedBlog, createBlog, updateBlog, isSubmitting} = useAppStore();
 
     const [removedImageIds, setRemovedImageIds] = useState<string[]>([]);
     const [previewUrls, setPreviewUrls] = useState<string[]>([]);
@@ -42,22 +42,15 @@ const BlogSheet = () => {
     const isMaxImagesReached = currentImages && currentImages.length >= 5;
 
     useEffect(() => {
-        if (isSheetOpen) {
+        if (isFormOpen) {
             if (selectedBlog) {
                 form.setValue("title", selectedBlog.title);
                 form.setValue("content", selectedBlog.content);
 
-                let existingImages: any[] = [];
-                // @ts-ignore
-                if (Array.isArray(selectedBlog?.images)) {
-                    // @ts-ignore
-                    existingImages = selectedBlog?.images;
-                } else if (selectedBlog.imageUrl) {
-                    existingImages = [{
-                        url: selectedBlog.imageUrl,
-                        publicId: selectedBlog.imagePublicId || ""
-                    }];
-                }
+                const existingImages = selectedBlog.images.map((img: any) => ({
+                    url: img.url,
+                    publicId: img.publicId || img._id
+                }));
 
                 form.setValue("images", existingImages);
                 generatePreviews(existingImages);
@@ -68,7 +61,7 @@ const BlogSheet = () => {
                 setRemovedImageIds([]);
             }
         }
-    }, [selectedBlog, form, isSheetOpen]);
+    }, [selectedBlog, form, isFormOpen]);
 
     const generatePreviews = (filesOrImages: any[]) => {
         const urls = filesOrImages.map((item) => {
@@ -133,14 +126,14 @@ const BlogSheet = () => {
                         formData.append("removeImageIds[]", id);
                     });
                 }
-                await editBlog(selectedBlog._id, formData);
+                await updateBlog(selectedBlog._id, formData);
                 toast.success("Blog updated successfully!");
             } else {
                 // Create Mode
-                await addBlog(formData);
+                await createBlog(formData);
                 toast.success("Blog created successfully!");
             }
-            setSheetOpen(false);
+            setFormOpen(false);
         } catch (error: any) {
             console.error(error);
             toast.error(error.message || "Something went wrong");
@@ -149,10 +142,10 @@ const BlogSheet = () => {
 
     return (
         <Sheet
-            open={isSheetOpen}
+            open={isFormOpen}
             onOpenChange={(open) => {
                 if (isSubmitting) return;
-                setSheetOpen(open);
+                setFormOpen(open);
             }}>
             <SheetContent
                 className="sm:max-w-xl w-full p-0 flex flex-col h-full"
@@ -298,7 +291,7 @@ const BlogSheet = () => {
 
                         <div className="p-4 border-t bg-background mt-auto flex justify-end gap-3">
                             <Button type="button" variant="outline" disabled={isSubmitting}
-                                    onClick={() => setSheetOpen(false)}>
+                                    onClick={() => setFormOpen(false)}>
                                 Cancel
                             </Button>
                             <Button type="submit" disabled={isSubmitting}>

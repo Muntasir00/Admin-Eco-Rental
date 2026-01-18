@@ -34,8 +34,8 @@ export default function CreateUpdateRoomSheet() {
     const {
         isCreateRoomSheetOpen,
         setCreateRoomSheetOpen,
-        addRoom,
-        editRoom,
+        createRoom,
+        updateRoom,
         selectedRoom,
         isSubmitting
     } = useAppStore();
@@ -174,10 +174,10 @@ export default function CreateUpdateRoomSheet() {
                     });
                 }
 
-                await editRoom(selectedRoom._id, formData);
+                await updateRoom(selectedRoom._id, formData);
                 toast.success("Room updated successfully!");
             } else {
-                await addRoom(formData);
+                await createRoom(formData);
                 toast.success("Room created successfully!");
             }
         } catch (error: any) {
