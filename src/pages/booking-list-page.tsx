@@ -17,7 +17,7 @@ import TableSkeletonRow from "@/components/bookings/table-skeleton-row";
 import getStatusBadge from "@/components/bookings/get-status-badge";
 import BookingPagination from "@/components/bookings/booking-pagination";
 import {formatDate} from "@/lib/utils";
-
+import DownloadInvoiceButton from "@/components/bookings/invoice/download-invoice-button";
 export default function BookingListPage() {
     const [searchParams, setSearchParams] = useSearchParams();
 
@@ -41,6 +41,8 @@ export default function BookingListPage() {
 
         fetchBookings(page);
     }, [searchParams, fetchBookings, setBookingFilters]);
+
+    console.log(bookings)
 
 
     const updateURL = (key: string, value: string | number | null) => {
@@ -259,6 +261,8 @@ export default function BookingListPage() {
                                             >
                                                 <Eye className="w-4 h-4 text-slate-600"/>
                                             </Button>
+                                            {/*<PrintInvoiceButton booking={booking} />*/}
+                                            <DownloadInvoiceButton booking={booking} />
                                         </TableCell>
                                     </TableRow>
                                 ))
