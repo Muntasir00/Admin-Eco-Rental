@@ -1,5 +1,5 @@
 const ROOTS = {
-    AUTH: '/auth',
+    AUTH: '/',
     Home: '/',
     Public: '/',
 };
@@ -12,7 +12,7 @@ export const paths = {
     // AUTH
     auth: {
         jwt: {
-            signIn: `${ROOTS.AUTH}/sign-in`,
+            signIn: `${ROOTS.AUTH}/login`,
             signUp: `${ROOTS.AUTH}/sign-up`,
             forgotPassword: `${ROOTS.AUTH}/forgot-password`,
             verifyOtp: `${ROOTS.AUTH}/verify-otp`,

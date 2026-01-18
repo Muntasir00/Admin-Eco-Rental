@@ -2,7 +2,6 @@ import axios from 'axios';
 import {CONFIG} from "@/utils/config-global";
 import {STORAGE_KEY} from "@/utils/constant";
 import type {AxiosRequestConfig, InternalAxiosRequestConfig} from 'axios';
-import {getFacilities} from "@/utils/facilities-actions";
 
 // ----------------------------------------------------------------------
 
@@ -56,6 +55,7 @@ export const endpoints = {
         signIn: '/user/login',
         signUp: '/user/register',
         verify: '/user/verify',
+        refreshToken: '/user/refresh-token',
         forgotPassword: '/user/forgot-password',
         verifyOtp: '/user/verify-otp/:email',
         changePassword: '/user/change-password/:email',
