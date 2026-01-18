@@ -55,7 +55,7 @@ export function LoginForm({className, ...props}: React.ComponentProps<"div">) {
     async function onSubmit(data: LoginFormValues) {
         try {
             await login({email: data.email, password: data.password});
-            navigate("/booking-list");
+            navigate("/dashboard");
         } catch (err) {
             console.error("Login Failed", err);
         }
