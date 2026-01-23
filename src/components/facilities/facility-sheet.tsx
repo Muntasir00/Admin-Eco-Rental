@@ -86,7 +86,6 @@ export default function FacilitySheet() {
                 await updateFacility(selectedFacility._id, data);
                 toast.success("Facility updated successfully!");
             } else {
-                console.log(data)
                 await createFacility(data);
                 toast.success("Facility created successfully!");
             }

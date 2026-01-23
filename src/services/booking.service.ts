@@ -1,6 +1,5 @@
-// import axios from "@/lib/axios";
+import axios from "@/lib/axios";
 import { endpoints } from "@/config/paths";
-import axios from "@/utils/axios";
 
 // প্যারামিটারের জন্য টাইপ ডিফাইন করা ভালো
 interface GetBookingParams {

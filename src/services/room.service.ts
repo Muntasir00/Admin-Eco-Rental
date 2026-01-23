@@ -1,11 +1,11 @@
-import { endpoints } from "@/config/paths";
-import axios from "@/utils/axios";
+import {endpoints} from "@/config/paths";
+import axios from "@/lib/axios";
 
 export const roomService = {
     // ১. সব রুম আনা
     getAll: async (page: number = 1) => {
         const res = await axios.get(endpoints.rooms.allRooms, {
-            params: { page }
+            params: {page}
         });
         return res.data;
     },

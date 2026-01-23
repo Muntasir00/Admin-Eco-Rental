@@ -1,6 +1,6 @@
 // import axios from "@/lib/axios";
 import {endpoints} from "@/config/paths";
-import axios from "@/utils/axios";
+import axios from "@/lib/axios";
 
 
 export const blogService = {

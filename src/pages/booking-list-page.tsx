@@ -42,8 +42,6 @@ export default function BookingListPage() {
         getBookings(page);
     }, [searchParams, getBookings, setBookingFilters]);
 
-    console.log(bookings)
-
 
     const updateURL = (key: string, value: string | number | null) => {
         setSearchParams(prev => {

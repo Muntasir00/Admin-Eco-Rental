@@ -1,10 +1,8 @@
 import {StateCreator} from 'zustand';
 import {LoginResponse, User} from "@/types";
-import {STORAGE_KEY} from "@/utils/constant";
-import {isValidToken, setSession} from "@/lib/utils";
-import {signIn, signOut} from "@/utils/actions";
+import {getAccessToken, setSession, isValidToken} from "@/lib/auth";
+import {authService} from "@/services/auth.service";
 
-// ১. টাইপ এক্সপোর্ট করা (Interface)
 export interface AuthSlice {
     user: User | null;
     isAuthenticated: boolean;
@@ -18,8 +16,6 @@ export interface AuthSlice {
     initialize: () => Promise<void>;
 }
 
-// ২. স্লাইস ক্রিয়েটর ফাংশন
-// StateCreator<TotalStoreType, MiddlewareTypes, [], SliceType>
 export const createAuthSlice: StateCreator<AuthSlice> = (set, get) => ({
     user: null,
     isAuthenticated: false,
@@ -30,11 +26,14 @@ export const createAuthSlice: StateCreator<AuthSlice> = (set, get) => ({
     login: async ({email, password}) => {
         set({loading: true, error: null});
         try {
-            const response: LoginResponse = await signIn({email, password});
+            const response: LoginResponse = await authService.login({email, password}); // signIn call to API
 
             if (response.user.role !== 'admin') {
-                throw new Error('Access Denied: You are not an Admin');
+                throw new Error('Access Denied: Admin only');
             }
+
+            // এখানে এক্সেস এবং রিফ্রেশ টোকেন দুটোই পাঠাবেন
+            setSession(response.accessToken, response.refreshToken);
 
             set({
                 user: response.user,
@@ -42,11 +41,7 @@ export const createAuthSlice: StateCreator<AuthSlice> = (set, get) => ({
                 loading: false,
             });
         } catch (error: any) {
-            set({
-                loading: false,
-                isAuthenticated: false,
-                error: error.message || 'Login failed'
-            });
+            set({loading: false, error: error.message});
             throw error;
         }
     },
@@ -54,22 +49,22 @@ export const createAuthSlice: StateCreator<AuthSlice> = (set, get) => ({
     initialize: async () => {
         set({loading: true});
         try {
-            const accessToken = sessionStorage.getItem(STORAGE_KEY);
+            const accessToken = getAccessToken();
             if (accessToken && isValidToken(accessToken)) {
                 setSession(accessToken);
                 set({isAuthenticated: true, isInitialized: true});
             } else {
-                set({isAuthenticated: false, isInitialized: true, user: null});
+                set({isAuthenticated: false, isInitialized: true});
             }
-        } catch (error:any) {
-            set({isAuthenticated: false, isInitialized: true, user: null});
+        } catch {
+            set({isAuthenticated: false, isInitialized: true});
         } finally {
             set({loading: false});
         }
     },
 
     logout: async () => {
-        await signOut();
+        await authService.signOut();
         set({user: null, isAuthenticated: false});
     },
 });

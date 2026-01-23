@@ -1,7 +1,7 @@
 // import axios from "@/lib/axios";
 import { endpoints } from "@/config/paths";
 import { FacilityPayload } from "@/types";
-import axios from "@/utils/axios"; // আপনার টাইপ ইমপোর্ট করুন
+import axios from "@/lib/axios"; // আপনার টাইপ ইমপোর্ট করুন
 
 export const facilityService = {
     // ১. সব ফ্যাসিলিটি আনা

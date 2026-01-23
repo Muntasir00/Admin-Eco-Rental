@@ -1,3 +1,4 @@
+import Cookies from 'js-cookie';
 import axios from "@/lib/axios";
 import { STORAGE_KEY, REFRESH_KEY } from "@/config/constants";
 
@@ -8,10 +9,8 @@ export function jwtDecode(token: string) {
         if (parts.length < 2) return null;
         const base64Url = parts[1];
         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const decoded = JSON.parse(atob(base64));
-        return decoded;
+        return JSON.parse(atob(base64));
     } catch (error) {
-        console.error('Error decoding token:', error);
         return null;
     }
 }
@@ -28,25 +27,23 @@ export function isValidToken(accessToken: string) {
     }
 }
 
-export async function setSession(accessToken: string | null, refreshToken: string | null = null) {
-    try {
-        if (accessToken) {
-            localStorage.setItem(STORAGE_KEY, accessToken);
-            if (refreshToken) {
-                localStorage.setItem(REFRESH_KEY, refreshToken);
-            }
-            axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
-        } else {
-            localStorage.removeItem(STORAGE_KEY);
-            localStorage.removeItem(REFRESH_KEY);
-            delete axios.defaults.headers.common.Authorization;
+export const setSession = (accessToken: string | null, refreshToken: string | null = null) => {
+    if (accessToken) {
+        // Cookie তে সেভ করা (Security: 7 দিন পর এক্সপায়ার হবে, প্রোডাকশনে secure: true যোগ করবেন)
+        Cookies.set(STORAGE_KEY, accessToken, { expires: 7 });
+        if (refreshToken) {
+            Cookies.set(REFRESH_KEY, refreshToken, { expires: 7 });
         }
-    } catch (error) {
-        console.error('Error during set session:', error);
-        throw error;
+        axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+    } else {
+        Cookies.remove(STORAGE_KEY);
+        Cookies.remove(REFRESH_KEY);
+        delete axios.defaults.headers.common.Authorization;
     }
-}
+};
 
+export const getAccessToken = () => Cookies.get(STORAGE_KEY);
+export const getRefreshToken = () => Cookies.get(REFRESH_KEY);
 
 // export async function setSession(accessToken: string | null) {
 //     try {

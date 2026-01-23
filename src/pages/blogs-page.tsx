@@ -24,7 +24,6 @@ const BlogsPage = () => {
         getBlogs(1);
     }, [getBlogs]);
 
-    console.log(blogs);
 
     // পেজ পরিবর্তনের হ্যান্ডলার
     const handlePageChange = (page: number) => {

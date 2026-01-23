@@ -138,7 +138,6 @@ export default function CreateUpdateRoomSheet() {
         if (!(itemToRemove instanceof File)) {
             if (itemToRemove.publicId) {
                 setRemovedImageIds((prev) => [...prev, itemToRemove.publicId]);
-                console.log("Marked for deletion:", itemToRemove.publicId);
             }
         }
 
