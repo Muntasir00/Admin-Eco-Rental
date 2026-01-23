@@ -5,8 +5,9 @@ import {BlogSlice, createBlogSlice} from "@/stores/slices/blog-slice";
 import {RoomSlice, createRoomSlice} from "@/stores/slices/room-slice";
 import {FacilitySlice, createFacilitySlice} from "@/stores/slices/facility-slice";
 import {BookingSlice,createBookingSlice} from "@/stores/slices/booking-slice"
+import {DashboardSlice, createDashboardSlice} from "@/stores/slices/dashboard-slice"
 
-export type AppStore = AuthSlice & BlogSlice & RoomSlice & FacilitySlice & BookingSlice;
+export type AppStore = AuthSlice & BlogSlice & RoomSlice & FacilitySlice & BookingSlice & DashboardSlice;
 
 export const useAppStore = create<AppStore>()(
     devtools(
@@ -17,6 +18,7 @@ export const useAppStore = create<AppStore>()(
                 ...createRoomSlice(...a),
                 ...createFacilitySlice(...a),
                 ...createBookingSlice(...a),
+                ...createDashboardSlice(...a),
             }),
             {
                 name: 'app-storage', // লোকাল স্টোরেজে এই নামে সেভ হবে

@@ -4,7 +4,6 @@ import {LucideIcon, TrendingDown, TrendingUp} from "lucide-react";
 type StatCardProps = {
     title: string;
     value: string | number;
-    change: string;
     period: string;
     icon: LucideIcon;
     isDown?: boolean;
@@ -14,7 +13,6 @@ type StatCardProps = {
 const StatCard = ({
                       title,
                       value,
-                      change,
                       period,
                       icon: Icon,
                       isDown = false,
@@ -26,7 +24,7 @@ const StatCard = ({
         <Card
             className={
                 isPrimary
-                    ? "bg-gradient-to-br from-blue-500 to-purple-600 text-white border-none"
+                    ? "p-3 gap-0 bg-gradient-to-br from-blue-500 to-purple-600 text-white border-none"
                     : "p-3 gap-0"
             }
         >
@@ -63,7 +61,7 @@ const StatCard = ({
                                 : "bg-cyan-100 text-cyan-600"
                     }`}
                 >
-                  {isDown ? <TrendingUp className="w-4"/> : <TrendingDown className="w-4"/>} {change}
+                  {isDown ? <TrendingUp className="w-4"/> : <TrendingDown className="w-4"/>}
                 </span>
 
                 <span className={isPrimary ? "text-blue-100" : "text-gray-400"}>

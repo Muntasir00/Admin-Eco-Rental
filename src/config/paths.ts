@@ -31,5 +31,8 @@ export const endpoints = {
     },
     booking: {
         getAllBookings: '/bookings/bookings-list',
+    },
+    dashboard:{
+        overview: '/admin/dashboard-overview',
     }
 };

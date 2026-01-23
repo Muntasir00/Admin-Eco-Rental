@@ -12,6 +12,8 @@ export interface LoginResponse {
     message: string;
     accessToken: string;
     refreshToken: string;
+    accessTokenExp:number;
+    refreshTokenExp:number;
     user: User;
 }
 
