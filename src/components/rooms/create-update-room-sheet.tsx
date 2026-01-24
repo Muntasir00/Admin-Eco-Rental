@@ -296,7 +296,7 @@ export default function CreateUpdateRoomSheet() {
 
                                     <FormField control={form.control} name="availableRooms" render={({field}) => (
                                         <FormItem>
-                                            <FormLabel>Available</FormLabel>
+                                            <FormLabel>Available Rooms</FormLabel>
                                             <FormControl><Input type="number" {...field} value={field.value as number} /></FormControl>
                                             <FormMessage/>
                                         </FormItem>
