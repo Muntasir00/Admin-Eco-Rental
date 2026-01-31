@@ -11,7 +11,7 @@ import {
 
 export default function RecentBookingsSkeleton() {
     return (
-        <Card className="h-full border-none shadow-none lg:shadow-sm">
+        <Card className="xl:col-span-2 h-full border-none shadow-none lg:shadow-sm">
             {/* Header Skeleton */}
             <CardHeader className="flex flex-row items-center justify-between border-b py-5">
                 <div className="flex flex-col gap-2">

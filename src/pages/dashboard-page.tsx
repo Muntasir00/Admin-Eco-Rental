@@ -13,10 +13,11 @@ import RecentBookingsSkeleton from "@/components/dashboard/recent-bookings-skele
 
 
 export default function DashboardPage() {
-    const {cards, isLoading, fetchDashboardData, bookings} = useAppStore();
+    const {cards, isLoading, fetchDashboardData, bookings, getBookings} = useAppStore();
 
     useEffect(() => {
         fetchDashboardData();
+        getBookings()
     }, []);
 
     // 1. Filter for MetricCards (Total Booking, Rooms Available, Total Revenue)
