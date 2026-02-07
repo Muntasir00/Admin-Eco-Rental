@@ -28,7 +28,7 @@ axiosInstance.interceptors.request.use((config) => {
 axiosInstance.interceptors.response.use(
     (res) => res,
     async (error) => {
-        const originalRequest = error.config;
+        const originalRequest = error.config as any;
 
         if (error.response?.status === 401 && !originalRequest._retry) {
             if (isRefreshing) {

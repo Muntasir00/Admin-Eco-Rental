@@ -8,15 +8,15 @@ interface AuthGuardProps {
 }
 
 const AuthGuard = ({ children }: AuthGuardProps) => {
-    const { isAuthenticated, isInitialized, initialize } = useAppStore();
+    const { isAuthenticated, isInitialized } = useAppStore();
     const location = useLocation();
 
     // 1. App load হওয়ার সাথে সাথে সেশন চেক করা
-    useEffect(() => {
-        if (!isInitialized) {
-            initialize();
-        }
-    }, [initialize, isInitialized]);
+    // useEffect(() => {
+    //     if (!isInitialized) {
+    //         initialize();
+    //     }
+    // }, [initialize, isInitialized]);
 
     // 2. লোডিং স্টেট হ্যান্ডেল করা (সেশন চেক চলাকালীন)
     if (!isInitialized) {

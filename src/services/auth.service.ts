@@ -41,6 +41,7 @@ export const authService = {
         } finally {
             try {
                 setSession(null, null);
+                sessionStorage.removeItem('user_info');
                 window.location.href = '/login';
             } catch (err) {
                 console.error('Error clearing session:', err);

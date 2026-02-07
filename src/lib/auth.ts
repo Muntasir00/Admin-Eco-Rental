@@ -5,7 +5,8 @@ import { endpoints } from "@/config/paths";
 import { STORAGE_KEY, REFRESH_KEY } from "@/config/constants";
 
 // টাইমার আইডি স্টোর করার জন্য
-let refreshTokenTimeoutId: NodeJS.Timeout | null = null;
+// let refreshTokenTimeoutId: NodeJS.Timeout | null = null;
+let refreshTokenTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
 // =========================================================
 // ১. টোকেন ডিকোড করার ইউটিলিটি (আলাদা লাইব্রেরি লাগবে না)
@@ -28,12 +29,13 @@ export const parseJwt = (token: string) => {
 // ২. সেশন সেট এবং টাইমার হ্যান্ডলিং
 // =========================================================
 export const setSession = (accessToken: string | null, refreshToken: string | null = null) => {
+    const isHttps = window.location.protocol === "https:";
     if (accessToken) {
         // কুকিতে সেভ (৭ দিন বা আপনার লজিক অনুযায়ী)
-        Cookies.set(STORAGE_KEY, accessToken, { expires: 7, secure: true, sameSite: 'strict' });
+        Cookies.set(STORAGE_KEY, accessToken, { expires: 7, secure: isHttps, sameSite: 'strict' });
 
         if (refreshToken) {
-            Cookies.set(REFRESH_KEY, refreshToken, { expires: 7, secure: true, sameSite: 'strict' });
+            Cookies.set(REFRESH_KEY, refreshToken, { expires: 7, secure: isHttps, sameSite: 'strict' });
         }
 
         // টোকেন সেট হওয়ার সাথে সাথে টাইমার স্টার্ট করুন

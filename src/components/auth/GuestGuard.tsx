@@ -8,13 +8,13 @@ interface GuestGuardProps {
 }
 
 const GuestGuard = ({ children }: GuestGuardProps) => {
-    const { isAuthenticated, isInitialized, initialize } = useAppStore();
+    const { isAuthenticated, isInitialized } = useAppStore();
 
-    useEffect(() => {
-        if (!isInitialized) {
-            initialize();
-        }
-    }, [initialize, isInitialized]);
+    // useEffect(() => {
+    //     if (!isInitialized) {
+    //         initialize();
+    //     }
+    // }, [initialize, isInitialized]);
 
     if (!isInitialized) {
         return <div>Loading...</div>;

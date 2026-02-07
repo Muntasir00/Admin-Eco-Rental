@@ -38,7 +38,15 @@ export const createAuthSlice: StateCreator<AuthSlice> = (set, get) => ({
             // response টাইপ ডিফাইন করা হলো
             const response: LoginResponse = await authService.login({ email, password });
 
+            if (!response.success) {
+                throw new Error(response.message || "Login failed");
+            }
+
             if (response.user.role !== 'admin') throw new Error('Access Denied: Admin only');
+
+            if (!response.accessToken || !response.refreshToken) {
+                throw new Error("Authentication tokens missing");
+            }
 
             // 1. টোকেন সেশনে সেভ করুন (এটি টাইমারও স্টার্ট করবে)
             setSession(response.accessToken, response.refreshToken);
@@ -46,8 +54,9 @@ export const createAuthSlice: StateCreator<AuthSlice> = (set, get) => ({
             // 2. ইউজার ইনফো সেশনে রাখুন (রিফ্রেশের পর ডাটা ধরে রাখার জন্য)
             // exp আলাদা করে রাখার দরকার নেই, কারণ টোকেন ডিকোড করলেই পাওয়া যায়
             sessionStorage.setItem('user_info', JSON.stringify(response.user));
+            set({ user: response.user, isAuthenticated: true, isInitialized: true, loading: false });
 
-            set({ user: response.user, isAuthenticated: true, loading: false });
+            // set({ user: response.user, isAuthenticated: true, loading: false });
         } catch (error: any) {
             set({ loading: false, error: error.message });
             throw error;
@@ -61,24 +70,24 @@ export const createAuthSlice: StateCreator<AuthSlice> = (set, get) => ({
             const storedUser = sessionStorage.getItem('user_info');
 
             // টোকেন এবং ইউজার ডাটা দুটোই থাকতে হবে এবং টোকেন ভ্যালিড হতে হবে
-            if (accessToken && storedUser && isValidToken(accessToken)) {
+            if (accessToken && isValidToken(accessToken)) {
 
                 // পেজ রিফ্রেশ দিলে টাইমার মুছে যায়, তাই initialize এর সময় আবার চালু করতে হবে
                 startRefreshTokenTimer(accessToken);
 
                 set({
-                    user: JSON.parse(storedUser),
+                    user: storedUser ? JSON.parse(storedUser) : null,
                     isAuthenticated: true,
                     isInitialized: true
                 });
             } else {
                 // টোকেন না থাকলে সব ক্লিন করুন
-                setSession(null);
+                setSession(null, null);
                 set({ user: null, isAuthenticated: false, isInitialized: true });
             }
         } catch {
-            setSession(null);
-            set({ isAuthenticated: false, isInitialized: true });
+            setSession(null, null);
+            set({ user: null, isAuthenticated: false, isInitialized: true });
         } finally {
             set({ loading: false });
         }
@@ -86,7 +95,13 @@ export const createAuthSlice: StateCreator<AuthSlice> = (set, get) => ({
 
     logout: async () => {
         await authService.signOut();
-        set({ user: null, isAuthenticated: false });
+        set({
+            user: null,
+            isAuthenticated: false,
+            isInitialized: true,
+            loading: false,
+            error: null
+        });
     },
 });
 

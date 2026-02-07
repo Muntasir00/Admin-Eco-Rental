@@ -10,9 +10,17 @@ import {Toaster} from "sonner";
 import RoomsPage from "@/pages/rooms-page";
 import FacilityPage from "@/pages/facility-page";
 import BookingListPage from "@/pages/booking-list-page";
+import {useAppStore} from "@/stores/slices/store";
+import {useEffect} from "react";
 
 
 function App() {
+    const { initialize, isInitialized } = useAppStore();
+
+    useEffect(() => {
+        if (!isInitialized) initialize();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
     return (
         <BrowserRouter>
             <Routes>
