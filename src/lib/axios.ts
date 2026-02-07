@@ -68,8 +68,8 @@ axiosInstance.interceptors.response.use(
 
             } catch (err) {
                 processQueue(err, null);
-                setSession(null); // Logout
-                window.location.href = '/login';
+                setSession(null, null); // Logout
+                // window.location.href = '/login';
                 return Promise.reject(err);
             } finally {
                 isRefreshing = false;
