@@ -12,9 +12,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { Loader2, X, ImagePlus } from "lucide-react";
+import {Textarea} from "@/components/ui/textarea";
 
 const roomFormSchema = z.object({
     name: z.string().min(3, "Name is required"),
+    description: z.string().min(20, "Description is required"),
     location: z.string().min(3, "Location is required"),
     size: z.coerce.number().min(1, "Size is required"),
     bedroom: z.coerce.number().min(1, "Bedroom count is required"),
@@ -48,6 +50,7 @@ export default function CreateUpdateRoomSheet() {
         resolver: zodResolver(roomFormSchema),
         defaultValues: {
             name: "",
+            description:"",
             location: "",
             size: 0,
             bedroom: 0,
@@ -68,6 +71,7 @@ export default function CreateUpdateRoomSheet() {
             if (selectedRoom) {
                 form.reset({
                     name: selectedRoom.name,
+                    description: selectedRoom.description,
                     location: selectedRoom.location,
                     size: selectedRoom.size,
                     bedroom: selectedRoom.bedroom,
@@ -89,6 +93,7 @@ export default function CreateUpdateRoomSheet() {
             } else {
                 form.reset({
                     name: "",
+                    description: "",
                     location: "",
                     size: 0,
                     bedroom: 0,
@@ -151,6 +156,7 @@ export default function CreateUpdateRoomSheet() {
             const formData = new FormData();
 
             formData.append("name", data.name);
+            formData.append("description", data.description);
             formData.append("location", data.location);
             formData.append("size", data.size.toString());
             formData.append("bedroom", data.bedroom.toString());
@@ -228,9 +234,24 @@ export default function CreateUpdateRoomSheet() {
                                     name="name"
                                     render={({field}) => (
                                         <FormItem>
-                                            <FormLabel>Room Name</FormLabel>
+                                            <FormLabel>Room Name <span className="text-red-600">*</span></FormLabel>
                                             <FormControl>
                                                 <Input placeholder="e.g. Premium Ocean View Suite" {...field} />
+                                            </FormControl>
+                                            <FormMessage/>
+                                        </FormItem>
+                                    )}
+                                />
+
+                                {/* description */}
+                                <FormField
+                                    control={form.control}
+                                    name="description"
+                                    render={({field}) => (
+                                        <FormItem>
+                                            <FormLabel>Description<span className="text-red-600">*</span></FormLabel>
+                                            <FormControl>
+                                                <Textarea className="h-32"  placeholder="Description ...." {...field} />
                                             </FormControl>
                                             <FormMessage/>
                                         </FormItem>
@@ -243,7 +264,7 @@ export default function CreateUpdateRoomSheet() {
                                     name="location"
                                     render={({field}) => (
                                         <FormItem>
-                                            <FormLabel>Location</FormLabel>
+                                            <FormLabel>Location <span className="text-red-600">*</span></FormLabel>
                                             <FormControl>
                                                 <Input placeholder="e.g. 6391 Elgin St. Celina, Delaware" {...field} />
                                             </FormControl>
@@ -256,7 +277,7 @@ export default function CreateUpdateRoomSheet() {
                                 <div className="grid sm:grid-cols-2 gap-4 items-baseline">
                                     <FormField control={form.control} name="pricePerNight" render={({field}) => (
                                         <FormItem>
-                                            <FormLabel>Price ($)</FormLabel>
+                                            <FormLabel>Price ($) <span className="text-red-600">*</span></FormLabel>
                                             <FormControl><Input type="number" {...field} value={field.value as number} /></FormControl>
                                             <FormMessage/>
                                         </FormItem>
@@ -264,7 +285,7 @@ export default function CreateUpdateRoomSheet() {
 
                                     <FormField control={form.control} name="size" render={({field}) => (
                                         <FormItem>
-                                            <FormLabel>Size (sq ft)</FormLabel>
+                                            <FormLabel>Size (sq ft)<span className="text-red-600">*</span></FormLabel>
                                             <FormControl><Input type="number" {...field} value={field.value as number} /></FormControl>
                                             <FormMessage/>
                                         </FormItem>
@@ -272,7 +293,7 @@ export default function CreateUpdateRoomSheet() {
 
                                     <FormField control={form.control} name="bedroom" render={({field}) => (
                                         <FormItem>
-                                            <FormLabel>Bedrooms</FormLabel>
+                                            <FormLabel>Bedrooms<span className="text-red-600">*</span></FormLabel>
                                             <FormControl><Input type="number" {...field} value={field.value as number} /></FormControl>
                                             <FormMessage/>
                                         </FormItem>
@@ -280,7 +301,7 @@ export default function CreateUpdateRoomSheet() {
 
                                     <FormField control={form.control} name="bathroom" render={({field}) => (
                                         <FormItem>
-                                            <FormLabel>Bathrooms</FormLabel>
+                                            <FormLabel>Bathrooms<span className="text-red-600">*</span></FormLabel>
                                             <FormControl><Input type="number" {...field} value={field.value as number} /></FormControl>
                                             <FormMessage/>
                                         </FormItem>
@@ -288,7 +309,7 @@ export default function CreateUpdateRoomSheet() {
 
                                     <FormField control={form.control} name="guest" render={({field}) => (
                                         <FormItem>
-                                            <FormLabel>Max Guests</FormLabel>
+                                            <FormLabel>Max Guests<span className="text-red-600">*</span></FormLabel>
                                             <FormControl><Input type="number" {...field} value={field.value as number} /></FormControl>
                                             <FormMessage/>
                                         </FormItem>
@@ -332,7 +353,7 @@ export default function CreateUpdateRoomSheet() {
                                     render={({ field: { onChange, value, ...rest } }) => (
                                         <FormItem>
                                             <FormLabel>
-                                                Room Images
+                                                Room Images <span className="text-red-600">*</span>
                                                 <span className="ml-2 text-xs text-muted-foreground font-normal">
                                                     (Max 5, Current: {currentImages?.length || 0})
                                                 </span>

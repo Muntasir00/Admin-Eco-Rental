@@ -66,6 +66,7 @@ export interface RoomImage {
 export interface Room {
     _id: string;
     name: string;
+    description: string;
     location: string;
     size: number;
     bedroom: number;
